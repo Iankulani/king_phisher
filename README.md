@@ -3,9 +3,19 @@
 <img width="1536" height="900" alt="kingphisher" src="https://github.com/user-attachments/assets/b8c9d3c0-2c4a-4c65-8d55-da7e143ff5ea" />
 
 
+[![GitHub stars](https://img.shields.io/github/stars/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/watchers)
+[![GitHub contributors](https://img.shields.io/github/contributors/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/graphs/contributors)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Iankulani/king_phisher?style=for-the-badge&logo=git)](https://github.com/Iankulani/king_phisher/commits/main)
+[![Docker Pulls](https://img.shields.io/badge/docker-available-blue?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/iankulaniking_phisher) <!-- Replace with actual Docker Hub link if available -->
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Iankulani/king_phisher)
+
 King Phisher is an open-source, professional-grade cybersecurity tool designed for simulating sophisticated phishing attacks and conducting social engineering campaigns . Developed initially by RSM (a security consulting firm) and currently maintained within the security community, it is widely used by Red Teams, SOC (Security Operations Centers) teams, and penetration testers to assess the "human firewall" of an organization .
 
-Unlike basic email senders, King Phisher operates on a flexible client-server architecture. This allows security professionals to manage multiple campaigns simultaneously, clone legitimate web environments in real-time, and harvest credentials, all while providing detailed analytics on user behavior .
+Unlike basic email senders, King Phisher operates on a flexible client-server architecture. This allows security professionals to manage multiple campaigns simultaneously, clone legitimate web environments in real-time, and harvest credentials, all while providing detailed analytics on user behavior.
+
 
 ## 2. Key Features & Technical Capabilities
 # 📧 Multi-Channel Communication Engine
@@ -36,7 +46,7 @@ Platform Support: The server runs on Linux (Ubuntu 20.04/22.04/24.04) and is pre
 
 One-Click Installer: Modern distributions (like AKUMA editions) feature automated installation scripts that configure PostgreSQL databases, Python dependencies, and SSL certificates without manual intervention .
 
-3. How It Works: The Attack (Simulation) Chain
+# 3. How It Works: The Attack (Simulation) Chain
 King Phisher allows operators to build a campaign in four simple steps, mirroring a real cybercriminal's workflow:
 
 Target Ingestion: Import a CSV file containing the target list (Name, Email, Department). This allows for departmental segmentation (e.g., testing Finance vs. HR separately) .
@@ -47,26 +57,26 @@ The Lure: The tool sends out messages via the selected vector (Email, Slack, etc
 
 Data Exfiltration (The Catch): The target lands on a cloned webpage. If they enter their username/password or 2FA code, the data is captured, stored locally on the testing server, and displayed in the operator's dashboard .
 
-4. Use Cases & Target Audience
+# 4. Use Cases & Target Audience
 For Red Teams:
 
-Simulating targeted "Spear Phishing" attacks against key personnel.
+* Simulating targeted "Spear Phishing" attacks against key personnel.
 
-Testing email gateway security (bypassing filters).
+* Testing email gateway security (bypassing filters).
 
-Performing credential harvesting exercises without malware.
+* Performing credential harvesting exercises without malware.
 
-For SOC / Blue Teams:
+# For SOC / Blue Teams:
 
-Human Risk Assessment: Identifying which departments are most susceptible to clicking malicious links .
+* Human Risk Assessment: Identifying which departments are most susceptible to clicking malicious links .
 
-Training Validation: Running drills via Slack or Discord to train employees on spotting social engineering in workplace chat tools.
+* Training Validation: Running drills via Slack or Discord to train employees on spotting social engineering in workplace chat tools.
 
-SIEM Integration: Feeding campaign data into SIEM systems to tune detection rules for real phishing attempts.
+* SIEM Integration: Feeding campaign data into SIEM systems to tune detection rules for real phishing attempts.
 
-For General Security Awareness:
+# For General Security Awareness
 
-Creating internal "cyber drills" to educate staff on the dangers of credential reuse and urgency-based lures .
+* Creating internal "cyber drills" to educate staff on the dangers of credential reuse and urgency-based lures .
 
 # 5. Legal & Ethical Considerations (Disclaimer)
  
@@ -102,9 +112,10 @@ python3 king_phisher.py
 ```
 
 # Or using the installer
+```bash
 chmod +x install.sh
 ./install.sh
-
+```
 # Or using Docker
 ```bash
 docker build -t king-phisher .
@@ -112,3 +123,4 @@ docker run -it --privileged -p 8080:8080 king-phisher
 ```
 # Star History
 
+[![Star History Chart](https://api.star-history.com/svg?repos=Iankulani/king_phisher&type=Date)](https://star-history.com/#Iankulani/king_phisher&Date)
