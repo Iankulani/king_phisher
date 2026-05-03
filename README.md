@@ -13,7 +13,7 @@
 [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Iankulani/king_phisher)
 [![GitHub watchers](https://img.shields.io/github/watchers/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/watchers)
 
-King Phisher is an open-source, professional-grade cybersecurity tool designed for simulating sophisticated phishing attacks and conducting social engineering campaigns . Developed initially by Accurate Cyber Defence (ACD, and currently maintained within the security community, it is widely used by Red Teams, SOC (Security Operations Centers) teams, and penetration testers to assess the "human firewall" of an organization .
+King Phisher is an open-source, professional-grade cybersecurity tool designed for simulating sophisticated phishing attacks and conducting social engineering campaigns . Developed initially by Accurate Cyber Defence (ACD), and currently maintained within the security community, it is widely used by Red Teams, SOC (Security Operations Centers) teams, and penetration testers to assess the "human firewall" of an organization .
 
 Unlike basic email senders, King Phisher operates on a flexible client-server architecture. This allows security professionals to manage multiple campaigns simultaneously, clone legitimate web environments in real-time, and harvest credentials, all while providing detailed analytics on user behavior.
 
