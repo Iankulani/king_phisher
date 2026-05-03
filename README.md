@@ -11,6 +11,7 @@
 [![Docker Pulls](https://img.shields.io/badge/docker-available-blue?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/iankulaniking_phisher) <!-- Replace with actual Docker Hub link if available -->
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Iankulani/king_phisher)
+[![GitHub watchers](https://img.shields.io/github/watchers/Iankulani/king_phisher?style=for-the-badge&logo=github)](https://github.com/Iankulani/king_phisher/watchers)
 
 King Phisher is an open-source, professional-grade cybersecurity tool designed for simulating sophisticated phishing attacks and conducting social engineering campaigns . Developed initially by RSM (a security consulting firm) and currently maintained within the security community, it is widely used by Red Teams, SOC (Security Operations Centers) teams, and penetration testers to assess the "human firewall" of an organization .
 
