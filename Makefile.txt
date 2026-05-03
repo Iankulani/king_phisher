@@ -1,0 +1,159 @@
+# King Phisher v3.0.0 Makefile
+.PHONY: help install uninstall clean start stop restart status logs shell test build docker-build docker-up docker-down docker-logs backup restore update
+
+# Colors
+GREEN  := $(shell tput -Txterm setaf 2)
+YELLOW := $(shell tput -Txterm setaf 3)
+WHITE  := $(shell tput -Txterm setaf 7)
+RESET  := $(shell tput -Txterm sgr0)
+
+TARGET_MAX_CHAR_NUM := 20
+
+## Show help
+help:
+	@echo ''
+	@echo '${YELLOW}Usage:${RESET}'
+	@echo '  make ${GREEN}<target>${RESET}'
+	@echo ''
+	@echo '${YELLOW}Targets:${RESET}'
+	@awk '/^[a-zA-Z\-_0-9]+:/ { \
+		helpMessage = match(lastLine, /^## (.*)/); \
+		if (helpMessage) { \
+			helpCommand = substr($$1, 0, index($$1, ":")-1); \
+			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
+			printf "  ${GREEN}%-$(TARGET_MAX_CHAR_NUM)s${RESET} %s\n", helpCommand, helpMessage; \
+		} \
+	} \
+	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+
+## Install King Phisher
+install:
+	@echo "Installing King Phisher..."
+	@chmod +x install.sh
+	@./install.sh
+
+## Uninstall King Phisher
+uninstall:
+	@echo "Uninstalling King Phisher..."
+	@rm -rf .king_phisher venv
+	@rm -f start_kingphisher.sh
+	@echo "✅ Uninstallation complete"
+
+## Clean temporary files
+clean:
+	@echo "Cleaning temporary files..."
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@find . -type f -name "*.pyo" -delete 2>/dev/null || true
+	@find . -type f -name "*.log" -delete 2>/dev/null || true
+	@rm -rf .cache .pytest_cache .coverage htmlcov 2>/dev/null || true
+	@echo "✅ Cleanup complete"
+
+## Start King Phisher
+start:
+	@echo "Starting King Phisher..."
+	@./start_kingphisher.sh
+
+## Stop King Phisher (kill process)
+stop:
+	@echo "Stopping King Phisher..."
+	@pkill -f "king_phisher.py" || true
+	@echo "✅ Stopped"
+
+## Restart King Phisher
+restart: stop start
+
+## Check status
+status:
+	@if pgrep -f "king_phisher.py" > /dev/null; then \
+		echo "✅ King Phisher is running"; \
+	else \
+		echo "❌ King Phisher is not running"; \
+	fi
+
+## View logs
+logs:
+	@tail -f logs/king_phisher.log
+
+## Run as service (systemd)
+service-install:
+	@echo "Installing systemd service..."
+	@sudo cp kingphisher.service /etc/systemd/system/
+	@sudo systemctl daemon-reload
+	@sudo systemctl enable kingphisher
+	@echo "✅ Service installed. Use: sudo systemctl {start|stop|restart|status} kingphisher"
+
+## Run tests
+test:
+	@echo "Running tests..."
+	@source venv/bin/activate && pytest tests/ -v --cov=. --cov-report=html
+
+## Build Docker image
+docker-build:
+	@echo "Building Docker image..."
+	@docker build -t king-phisher:latest .
+
+## Start Docker Compose
+docker-up:
+	@echo "Starting Docker Compose..."
+	@docker-compose up -d
+
+## Stop Docker Compose
+docker-down:
+	@echo "Stopping Docker Compose..."
+	@docker-compose down
+
+## Docker logs
+docker-logs:
+	@docker-compose logs -f
+
+## Backup database and config
+backup:
+	@echo "Creating backup..."
+	@mkdir -p backups
+	@cp .king_phisher/king_phisher.db backups/king_phisher_$(shell date +%Y%m%d_%H%M%S).db
+	@cp .king_phisher/config.json backups/config_$(shell date +%Y%m%d_%H%M%S).json
+	@tar -czf backups/kingphisher_$(shell date +%Y%m%d_%H%M%S).tar.gz .king_phisher/ reports/ logs/
+	@echo "✅ Backup created in backups/ directory"
+
+## Restore from backup
+restore:
+	@echo "Restoring from backup..."
+	@read -p "Enter backup file path: " backup_file; \
+	if [ -f "$$backup_file" ]; then \
+		tar -xzf "$$backup_file" -C /; \
+		echo "✅ Restore complete"; \
+	else \
+		echo "❌ Backup file not found"; \
+	fi
+
+## Update to latest version
+update:
+	@echo "Updating King Phisher..."
+	@git pull origin main
+	@source venv/bin/activate && pip install -r requirements.txt --upgrade
+	@echo "✅ Update complete. Restart the application."
+
+## Create development environment
+dev-setup:
+	@echo "Setting up development environment..."
+	@python3 -m venv venv
+	@source venv/bin/activate && pip install -r requirements.txt -r requirements-dev.txt
+	@pre-commit install
+	@echo "✅ Development environment ready"
+
+## Generate documentation
+docs:
+	@echo "Generating documentation..."
+	@source venv/bin/activate && pdoc --html --output-dir docs king_phisher.py
+	@echo "✅ Documentation generated in docs/ directory"
+
+## Run security audit
+security-audit:
+	@echo "Running security audit..."
+	@source venv/bin/activate && bandit -r . -f html -o security_report.html
+	@source venv/bin/activate && safety check -r requirements.txt --json > safety_report.json
+	@echo "✅ Security reports generated"
+
+## Default target
+default: help

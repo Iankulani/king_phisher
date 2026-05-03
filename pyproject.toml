@@ -1,0 +1,144 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "king-phisher"
+version = "3.0.0"
+description = "Advanced Security Framework with Multi-Platform Integration"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Ian Carter Kulani", email = "ian@kingphisher.local"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+]
+dependencies = [
+    "cryptography>=41.0.0",
+    "paramiko>=3.3.0",
+    "scapy>=2.5.0",
+    "requests>=2.31.0",
+    "psutil>=5.9.0",
+    "colorama>=0.4.6",
+    "flask>=2.3.0",
+    "flask-cors>=4.0.0",
+]
+
+[project.optional-dependencies]
+discord = ["discord.py>=2.3.0"]
+telegram = ["telethon>=1.34.0"]
+slack = ["slack-sdk>=3.21.0"]
+whatsapp = ["selenium>=4.15.0", "webdriver-manager>=4.0.0"]
+full = [
+    "discord.py>=2.3.0",
+    "telethon>=1.34.0",
+    "slack-sdk>=3.21.0",
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.0",
+    "qrcode>=7.4.0",
+    "pillow>=10.0.0",
+    "pyshorteners>=1.0.1",
+    "python-whois>=0.8.0",
+]
+
+[project.scripts]
+king-phisher = "king_phisher:main"
+
+[project.urls]
+Homepage = "https://github.com/iank/king-phisher"
+Documentation = "https://docs.kingphisher.local"
+Repository = "https://github.com/iank/king-phisher.git"
+Issues = "https://github.com/iank/king-phisher/issues"
+
+[tool.black]
+line-length = 120
+target-version = ['py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --strict-markers --tb=short"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["king_phisher"]
+omit = ["tests/*", "venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if False:",
+]
+show_missing = true
+fail_under = 70
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".git"]
+skids = ["B101", "B307"]
+severity = "medium"
+confidence = "medium"
+
+[tool.pylint.main]
+ignore = ["tests", "venv"]
+extension-pkg-allow-list = ["cryptography"]
+
+[tool.pylint.messages_control]
+disable = ["C0114", "C0115", "C0116", "R0903", "R0913", "W0511"]
+
+[tool.pylint.design]
+max-args = 10
+max-locals = 25
+max-returns = 10

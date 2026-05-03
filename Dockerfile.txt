@@ -1,0 +1,110 @@
+# Multi-stage build for King Phisher v3.0.0
+FROM alpine:3.19 as builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    py3-cryptography \
+    py3-paramiko \
+    py3-requests \
+    py3-psutil \
+    py3-flask \
+    build-base \
+    python3-dev \
+    libffi-dev \
+    openssl-dev \
+    cargo \
+    nmap \
+    nikto \
+    curl \
+    tcpdump \
+    wireshark-cli \
+    util-linux \
+    net-tools \
+    iproute2 \
+    iptables \
+    arp-scan
+
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt || true
+RUN pip3 install --no-cache-dir \
+    netifaces \
+    dnspython \
+    python-dotenv \
+    pyyaml \
+    tabulate \
+    tqdm \
+    rich \
+    scapy
+
+# Final stage
+FROM alpine:3.19
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    py3-cryptography \
+    py3-paramiko \
+    py3-requests \
+    py3-psutil \
+    py3-flask \
+    nmap \
+    nikto \
+    curl \
+    tcpdump \
+    util-linux \
+    net-tools \
+    iproute2 \
+    iptables \
+    arp-scan \
+    bind-tools \
+    traceroute \
+    whois \
+    openssh-client \
+    chromium \
+    chromium-chromedriver \
+    sudo \
+    bash \
+    zsh \
+    fish
+
+# Create non-root user for security
+RUN addgroup -g 1000 -S kingphisher && \
+    adduser -u 1000 -S kingphisher -G kingphisher && \
+    echo "kingphisher ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables, /bin/sh" >> /etc/sudoers
+
+# Create necessary directories
+RUN mkdir -p /app/.king_phisher && \
+    mkdir -p /app/reports && \
+    mkdir -p /app/wordlists && \
+    chown -R kingphisher:kingphisher /app
+
+WORKDIR /app
+
+# Copy application
+COPY --chown=kingphisher:kingphisher king_phisher.py /app/
+COPY --chown=kingphisher:kingphisher requirements.txt /app/
+
+# Set permissions
+RUN chmod +x /app/king_phisher.py
+
+# Expose ports
+EXPOSE 8080 8081 8082 22 80 443 53 67 68
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/ || exit 1
+
+# Switch to non-root user
+USER kingphisher
+
+# Set entrypoint
+ENTRYPOINT ["python3", "/app/king_phisher.py"]
+
+# Default command
+CMD ["--headless"]

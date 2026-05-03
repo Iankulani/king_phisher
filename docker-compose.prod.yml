@@ -1,0 +1,91 @@
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  king-phisher:
+    restart: always
+    environment:
+      - KING_PHISHER_ENV=production
+      - LOG_LEVEL=WARNING
+      - WEB_PORT=8080
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        delay: 0s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == manager
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://graylog:12201"
+        tag: "king-phisher"
+    secrets:
+      - db_password
+      - api_keys
+
+  postgres:
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+
+  redis:
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    secrets:
+      - redis_password
+
+  nginx:
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./dhparam.pem:/etc/nginx/dhparam.pem:ro
+    depends_on:
+      - king-phisher
+
+  monitoring:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - monitoring
+
+secrets:
+  db_password:
+    external: true
+  api_keys:
+    external: true
+  redis_password:
+    external: true
+
+volumes:
+  postgres_data_prod:
+  prometheus_data:
+  grafana_data:

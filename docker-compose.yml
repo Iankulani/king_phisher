@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  king-phisher:
+    build: .
+    container_name: king_phisher_v3
+    restart: unless-stopped
+    privileged: true  # Required for raw sockets and iptables
+    networks:
+      - kingphisher_net
+    ports:
+      - "8080:8080"      # Web Interface
+      - "8081:8081"      # Phishing Server HTTP
+      - "8443:8443"      # Phishing Server HTTPS
+      - "8022:22"        # SSH Management
+    volumes:
+      # Persistent data
+      - kingphisher_data:/app/.king_phisher
+      - kingphisher_reports:/app/reports
+      - kingphisher_wordlists:/app/wordlists
+      - kingphisher_logs:/app/logs
+      # Mount for SSH keys
+      - ~/.ssh:/home/kingphisher/.ssh:ro
+      # Mount for custom templates
+      - ./templates:/app/templates:ro
+    environment:
+      - KING_PHISHER_ENV=production
+      - WEB_PORT=8080
+      - PHISHING_PORT=8081
+      - PHISHING_SSL_PORT=8443
+      - LOG_LEVEL=INFO
+      - TZ=UTC
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    sysctls:
+      - net.core.somaxconn=1024
+      - net.ipv4.ip_forward=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # Optional: Redis for session management
+  redis:
+    image: redis:7-alpine
+    container_name: kingphisher_redis
+    restart: unless-stopped
+    networks:
+      - kingphisher_net
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # Optional: PostgreSQL for production database
+  postgres:
+    image: postgres:16-alpine
+    container_name: kingphisher_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=kingphisher
+      - POSTGRES_USER=kingphisher
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-kingphisher_secure_password}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kingphisher_net
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kingphisher"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: kingphisher_nginx
+    restart: unless-stopped
+    networks:
+      - kingphisher_net
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - king-phisher
+    profiles:
+      - production
+
+networks:
+  kingphisher_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  kingphisher_data:
+  kingphisher_reports:
+  kingphisher_wordlists:
+  kingphisher_logs:
+  redis_data:
+  postgres_data:
