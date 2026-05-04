@@ -39,11 +39,11 @@ Two-Factor Harvesting: Advanced versions support "phishing-resistant" techniques
 # 📊 Real-Time Analytics & SOC Metrics
 King Phisher provides a comprehensive dashboard that allows security teams to measure the effectiveness of their security posture:
 
-Live Tracking: See exactly who opened the email, who clicked the link, and who entered credentials in real-time .
+* Live Tracking: See exactly who opened the email, who clicked the link, and who entered credentials in real-time .
 
-Geo-location: Track the geographic location of targets who interact with the phishing link.
+* Geo-location: Track the geographic location of targets who interact with the phishing link.
 
-SOC Testing Metrics: It generates specific KPIs for SOC teams, including Detection Rate (percentage of campaigns caught by security tools) and Response Time (how fast the SOC reacted to a simulated breach) .
+* SOC Testing Metrics: It generates specific KPIs for SOC teams, including Detection Rate (percentage of campaigns caught by security tools) and Response * * Time (how fast the SOC reacted to a simulated breach) .
 
 # 🛠️ Installation & Environment
 Platform Support: The server runs on Linux (Ubuntu 20.04/22.04/24.04) and is pre-packaged in Kali Linux for ease of use. The client interface is available for both Linux and Windows .
