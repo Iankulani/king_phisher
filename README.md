@@ -20,7 +20,6 @@ Unlike basic email senders, King Phisher operates on a flexible client-server ar
 
 ## 2. Key Features & Technical
 
- Capabilities
 
 # 📧 Multi-Channel Communication Engine
 While King Phisher is historically renowned for email phishing (SMTP support), the modern iteration recognizes that social engineering happens everywhere. The tool facilitates campaign delivery across Telegram, Discord, Slack, iMessage, and Web Apps .
